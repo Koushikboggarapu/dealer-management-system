@@ -1,0 +1,35 @@
+<section class="page">
+  <div class="page-heading"><div><span class="eyebrow">INVENTORY</span><h1>Product management</h1><p class="page-description">Keep your catalog, pricing and stock up to date.</p></div><button mat-flat-button type="button" (click)="edit(null)" [disabled]="saving()">New product</button></div>
+  @if (message()) { <p class="success-message" role="status">{{ message() }}</p> }
+  <mat-card class="editor-card"><mat-card-content>
+    <h2>{{ selected() ? 'Edit product' : 'Create product' }}</h2>
+    <p class="muted">Available stock is the current quantity, not an amount to add. Concurrent changes require a reload; they are never overwritten automatically.</p>
+    @if (formError()) { <p class="error-message" role="alert">{{ formError() }}</p> }
+    @if (conflict()) { <button mat-stroked-button type="button" (click)="reloadAfterConflict()">Discard edits and reload products</button> }
+    @if (saving()) { <mat-progress-bar mode="indeterminate" aria-label="Saving product" /> }
+    <form [formGroup]="form" (ngSubmit)="save()"><fieldset class="form-grid" [disabled]="saving()">
+      <mat-form-field appearance="outline"><mat-label>Product code</mat-label><input matInput formControlName="code" maxlength="30" required /><mat-error>Code is required (maximum 30 characters).</mat-error></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Name</mat-label><input matInput formControlName="name" maxlength="150" required /><mat-error>Name is required (maximum 150 characters).</mat-error></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Category</mat-label><input matInput formControlName="category" maxlength="100" required /><mat-error>Category is required (maximum 100 characters).</mat-error></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Unit price</mat-label><input matInput type="number" formControlName="unitPrice" min="0.01" max="99999999.99" step="0.01" required /><mat-error>Use a positive price, up to 99999999.99, with at most two decimal places.</mat-error></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Available stock</mat-label><input matInput type="number" formControlName="availableStock" min="0" step="1" required /><mat-error>Use a non-negative whole number, up to 2147483647.</mat-error></mat-form-field>
+      <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+      <div class="actions full-width"><button mat-flat-button type="submit" [disabled]="saving() || form.invalid || conflict()">{{ saving() ? 'Saving…' : 'Save product' }}</button><button mat-button type="button" (click)="edit(null)" [disabled]="saving()">Clear form</button></div>
+    </fieldset></form>
+  </mat-card-content></mat-card>
+  <form class="search-form" (ngSubmit)="search()"><mat-form-field appearance="outline"><mat-label>Search name, code or category</mat-label><input matInput [formControl]="searchControl" maxlength="150" /></mat-form-field><button mat-flat-button type="submit">Search</button><button mat-stroked-button type="button" (click)="load()" [disabled]="loading()">Refresh list</button></form>
+  @if (loading()) { <mat-progress-bar mode="indeterminate" aria-label="Loading products" /> }
+  @if (error()) { <p class="error-message" role="alert">{{ error() }}</p> }
+  <div class="table-scroll"><table class="data-table"><caption class="visually-hidden">Products</caption>
+    <thead><tr><th>Code</th><th>Name</th><th>Category</th><th>Unit price</th><th>Stock</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>@for (product of items(); track product.id) {
+      <tr><td>{{ product.code }}</td><td>{{ product.name }}</td><td>{{ product.category }}</td><td>{{ product.unitPrice | number:'1.2-2' }}</td><td>{{ product.availableStock }}</td><td><span class="status-badge" [attr.data-status]="product.isActive ? 'Active' : 'Inactive'">{{ product.isActive ? 'Active' : 'Inactive' }}</span></td><td><button mat-button type="button" (click)="edit(product)" [disabled]="saving()">Edit</button><button mat-button type="button" (click)="historyProduct.set(product)" [disabled]="saving()">View price history</button></td></tr>
+    }</tbody>
+  </table></div>
+  @if (!loading() && !error() && items().length === 0) { <p role="status">No products found.</p> }
+  <mat-paginator [length]="total()" [pageIndex]="pageIndex()" [pageSize]="pageSize()" [pageSizeOptions]="[10, 20, 50]" (page)="changePage($event)" aria-label="Product pages" />
+  @if (historyProduct(); as product) {
+    <button mat-button type="button" (click)="historyProduct.set(null)">Close price history</button>
+    <app-product-price-history [product]="product" />
+  }
+</section>

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>DealerManagementSystem.API-91a24021-721b-4f96-a104-575c4933c67e</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11" PrivateAssets="all" />
+    <ProjectReference Include="..\DealerManagementSystem.Application\DealerManagementSystem.Application.csproj" />
+    <ProjectReference Include="..\DealerManagementSystem.Infrastructure\DealerManagementSystem.Infrastructure.csproj" />
+    <ProjectReference Include="..\DealerManagementSystem.Domain\DealerManagementSystem.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

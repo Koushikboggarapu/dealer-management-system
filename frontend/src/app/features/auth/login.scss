@@ -1,0 +1,19 @@
+.login-page { min-height: 100dvh; display: flex; flex-direction: column; background: #f5f7fb; }
+.login-header { padding: 24px clamp(20px, 5vw, 80px); background: #101c32; }
+.login-brand { display: flex; gap: 14px; align-items: center; color: #fff; font-weight: 650; font-size: 16px; }
+.brand-icon { display: grid; place-items: center; width: 42px; height: 46px; flex-shrink: 0; background: #4778f5; border-radius: 12px; font-size: 28px; font-weight: 800; }
+.login-brand small { display: block; font-size: 9px; letter-spacing: 2px; font-weight: 500; color: #a8badd; margin-top: 3px; }
+.signin-panel { flex: 1; display: grid; place-items: center; padding: 40px 20px; }
+.login-card { width: 100%; max-width: 420px; background: #fff; border: 1px solid #e2e7ef; border-radius: 14px; box-shadow: 0 8px 28px #1426460a; overflow: hidden; }
+mat-card-content, mat-card-content:first-child, mat-card-content:last-child { padding: 32px; }
+h1 { font-size: 1.65rem; margin: 0 0 8px; letter-spacing: -.5px; }
+.signin-subtitle { color: #627087; font-size: 13px; margin: 0 0 28px; }
+form { display: grid; gap: 10px; }
+mat-form-field { width: 100%; min-width: 0; }
+button[type='submit'] { min-height: 46px; border-radius: 8px; font-size: 13px; letter-spacing: .2px; }
+.session-message { padding: 14px; border: 1px solid #e9d5a7; background: #fff8e8; border-radius: 8px; font-size: 13px; color: #795411; }
+@media (max-width: 480px) {
+  .login-header { padding: 20px; }
+  .signin-panel { padding: 28px 16px; }
+  mat-card-content, mat-card-content:first-child, mat-card-content:last-child { padding: 24px; }
+}

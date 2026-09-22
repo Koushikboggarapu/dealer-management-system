@@ -1,0 +1,34 @@
+<div class="login-page">
+  <header class="login-header">
+    <div class="login-brand"><span class="brand-icon" aria-hidden="true">D</span><span>Dealer Management<small>OPERATIONS WORKSPACE</small></span></div>
+  </header>
+  <main class="signin-panel" aria-labelledby="signin-title">
+    <mat-card class="login-card">
+      @if (loading()) { <mat-progress-bar mode="indeterminate" aria-label="Signing in" /> }
+      <mat-card-content>
+        <h1 id="signin-title">Sign in</h1>
+        <p class="signin-subtitle">Enter your Admin or Dealer account details.</p>
+        @if (expired) { <p class="session-message" role="status">Your session expired. Please sign in again.</p> }
+        @if (error()) { <p class="error-message" role="alert">{{ error() }}</p> }
+        <form [formGroup]="form" (ngSubmit)="submit()" [attr.aria-busy]="loading()">
+          <mat-form-field appearance="outline">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" autocomplete="username" maxlength="100" required />
+            <mat-error>Enter a username (up to 100 characters).</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'"
+              autocomplete="current-password" maxlength="200" required />
+            <button mat-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())"
+              [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'" [attr.aria-pressed]="!hidePassword()">
+              {{ hidePassword() ? 'Show' : 'Hide' }}
+            </button>
+            <mat-error>Enter your password.</mat-error>
+          </mat-form-field>
+          <button mat-flat-button type="submit" [disabled]="loading() || form.invalid">{{ loading() ? 'Signing in…' : 'Sign in' }}</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </main>
+</div>

@@ -1,0 +1,40 @@
+<section class="page">
+  <div class="page-heading"><h1>Order details</h1><div class="actions"><a mat-button [routerLink]="root">Back to orders</a><button mat-stroked-button type="button" (click)="load()" [disabled]="loading() || saving()">Reload order</button></div></div>
+  @if (loading() || saving()) { <mat-progress-bar mode="indeterminate" aria-label="Processing order" /> }
+  @if (message()) { <p class="success-message" role="status">{{ message() }}</p> }
+  @if (error()) { <p class="error-message" role="alert">{{ error() }}</p> }
+  @if (refreshRequired()) { <p role="status">Reload the order before trying another action. Do not assume a failed network response means the operation was not saved.</p> }
+  @if (order(); as current) {
+    <mat-card class="editor-card"><mat-card-content>
+      <h2>{{ current.companyName }}</h2><p class="record-id">Order: {{ current.id }}</p>
+      <p class="muted">Created: {{ current.createdAt | date:'medium' }}</p><p>Status: <span class="status-badge" [attr.data-status]="current.status">{{ current.status }}</span></p>
+      <div class="actions">
+        @if (isDealer && current.status === 'Draft') { <a mat-stroked-button [routerLink]="[root, current.id, 'edit']" [disabled]="saving() || refreshRequired()">Edit draft</a> }
+        @for (status of actions(); track status) { <button mat-stroked-button type="button" (click)="selectAction(status)" [disabled]="saving() || refreshRequired()">{{ labels[status] }}</button> }
+      </div>
+      @if (action(); as target) {
+        <div class="confirmation-panel">
+          <h3>Confirm: {{ labels[target] }}</h3>
+          @if (target === 'Submitted') { <p>Submission captures current product prices. The submitted order cannot be edited afterward.</p> }
+          @if (target === 'Approved') { <p>Approval deducts stock for all items. If any item has insufficient stock, nothing is approved.</p> }
+          @if (target === 'Rejected' || target === 'Cancelled') { <p>This ends the order workflow. The order cannot be reopened.</p> }
+          <mat-form-field appearance="outline" class="full-width"><mat-label>{{ target === 'Rejected' ? 'Rejection reason (required)' : 'Remarks (optional)' }}</mat-label>
+            <textarea matInput [formControl]="remarks" rows="3" maxlength="1000" [readonly]="saving()"></textarea>
+            <mat-error>{{ target === 'Rejected' ? 'Enter a reason of up to 1000 characters.' : 'Maximum 1000 characters.' }}</mat-error>
+          </mat-form-field>
+          <div class="actions"><button mat-flat-button type="button" (click)="confirm()" [disabled]="saving() || remarks.invalid || refreshRequired()">Confirm {{ labels[target] }}</button><button mat-button type="button" (click)="cancelAction()" [disabled]="saving()">Back</button></div>
+        </div>
+      }
+    </mat-card-content></mat-card>
+    <h2>Items</h2>
+    <div class="table-scroll"><table class="data-table"><caption class="visually-hidden">Order items</caption><thead><tr><th>Product</th><th>Quantity</th><th>Unit price</th><th>Line total</th></tr></thead><tbody>
+      @for (item of current.items; track item.productId) { <tr><td>{{ item.productName }}</td><td>{{ item.quantity }}</td><td>{{ item.unitPrice | number:'1.2-2' }}</td><td>{{ item.total | number:'1.2-2' }}</td></tr> }
+    </tbody></table></div>
+    <p class="order-total">{{ current.status === 'Draft' ? 'Backend-calculated draft estimate' : 'Order total' }}: {{ current.total | number:'1.2-2' }}</p>
+    @if (current.status === 'Draft') { <p class="muted">Draft prices can change. The backend captures current prices when you submit.</p> }
+    <h2>Status history</h2><p class="muted">Timestamps are shown in your local time.</p>
+    <div class="table-scroll"><table class="data-table"><caption class="visually-hidden">Order status history</caption><thead><tr><th>Previous</th><th>New status</th><th>User</th><th>Timestamp</th><th>Remarks</th></tr></thead><tbody>
+      @for (entry of current.history; track $index) { <tr><td>{{ entry.previousStatus ?? '—' }}</td><td>{{ entry.newStatus }}</td><td>{{ entry.username }}</td><td>{{ entry.timestamp | date:'medium' }}</td><td class="remarks">{{ entry.remarks || '—' }}</td></tr> }
+    </tbody></table></div>
+  }
+</section>

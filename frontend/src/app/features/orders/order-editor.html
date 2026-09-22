@@ -1,0 +1,34 @@
+<section class="page">
+  <div class="page-heading"><h1>{{ id ? 'Edit draft order' : 'Create draft order' }}</h1><a mat-button [routerLink]="id ? ['/dealer/orders', id] : ['/dealer/orders']">Back</a></div>
+  <p>Choose products, adjust whole-number quantities, and save. You can submit the saved draft from its details page.</p>
+  @if (loadingOrder() || saving()) { <mat-progress-bar mode="indeterminate" aria-label="Processing draft" /> }
+  @if (error()) { <p class="error-message" role="alert">{{ error() }}</p> }
+  @if (ready()) {
+    <mat-card class="editor-card"><mat-card-content>
+      <h2>Draft items ({{ lines.length }} / 100)</h2>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="table-scroll"><table class="data-table"><caption class="visually-hidden">Editable draft items</caption><thead><tr><th>Product</th><th>Unit price estimate</th><th>Quantity</th><th>Action</th></tr></thead>
+          <tbody formArrayName="items">@for (line of lines.controls; track line; let i = $index) {
+            <tr [formGroupName]="i"><td>{{ line.controls.productName.value }}</td><td>{{ line.controls.unitPrice.value | number:'1.2-2' }}</td>
+              <td><mat-form-field appearance="outline" class="quantity-field"><mat-label>Quantity</mat-label><input matInput type="number" formControlName="quantity" min="1" max="1000000" step="1" [readonly]="saving()" required /><mat-error>Use a whole number from 1 to 1000000.</mat-error></mat-form-field></td>
+              <td><button mat-button type="button" (click)="remove(i)" [disabled]="saving()" [attr.aria-label]="'Remove ' + line.controls.productName.value">Remove</button></td></tr>
+          }</tbody>
+        </table></div>
+        @if (lines.length === 0) { <p>No products selected. An empty draft can be saved, but cannot be submitted.</p> }
+        <p class="order-total">Unsaved estimate: {{ estimate() | number:'1.2-2' }}</p>
+        @if (savedTotal() !== null) { <p>Backend-calculated draft total: {{ savedTotal() | number:'1.2-2' }}</p> }
+        <p class="muted">Estimates are not final prices. The server calculates totals when saving and captures current prices when submitting. Stock is deducted only on approval.</p>
+        <button mat-flat-button type="submit" [disabled]="saving() || form.invalid">{{ saving() ? 'Saving…' : 'Save draft and view total' }}</button>
+      </form>
+    </mat-card-content></mat-card>
+    <h2>Add products</h2>
+    <form class="search-form" (ngSubmit)="searchProducts()"><mat-form-field appearance="outline"><mat-label>Search products</mat-label><input matInput [formControl]="searchControl" maxlength="150" /></mat-form-field><button mat-flat-button type="submit">Search</button></form>
+    @if (loadingProducts()) { <mat-progress-bar mode="indeterminate" aria-label="Loading products" /> }
+    @if (productError()) { <p class="error-message" role="alert">{{ productError() }}</p> }
+    <div class="card-grid">@for (product of products(); track product.id) {
+      <mat-card><mat-card-content><h3>{{ product.name }}</h3><p>{{ product.code }} · {{ product.category }}</p><p>Unit price: {{ product.unitPrice | number:'1.2-2' }} · Stock: {{ product.availableStock }}</p><button mat-stroked-button type="button" (click)="add(product)" [disabled]="saving() || loadingProducts()">Add one to draft</button></mat-card-content></mat-card>
+    }</div>
+    @if (!loadingProducts() && !productError() && products().length === 0) { <p>No active products match your search.</p> }
+    <mat-paginator [length]="productTotal()" [pageSize]="10" [pageIndex]="productPageIndex()" (page)="changeProductPage($event.pageIndex)" aria-label="Products to add" />
+  }
+</section>

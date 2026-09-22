@@ -1,0 +1,48 @@
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="app-shell" [class.menu-open]="menuOpen()" (keydown.escape)="closeMenu()">
+  <header class="workspace-header">
+    <div class="workspace-location">
+      <button #menuToggle class="menu-toggle" type="button" (click)="menuOpen.set(!menuOpen())"
+        [attr.aria-expanded]="menuOpen()" aria-controls="workspace-sidebar" aria-label="Toggle navigation">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </button>
+      <span class="workspace-name">{{ isAdmin() ? 'Admin workspace' : 'Dealer workspace' }}</span>
+      <span class="breadcrumb-divider" aria-hidden="true">/</span>
+      <span class="current-page">{{ pageLabel() }}</span>
+    </div>
+    <div class="header-account">
+      <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+      <span class="account-details"><strong>{{ auth.session()?.username }}</strong><span>{{ auth.session()?.role }}</span></span>
+      <button mat-button type="button" (click)="auth.logout()">Logout</button>
+    </div>
+  </header>
+  <aside id="workspace-sidebar" class="app-sidebar">
+    <a class="brand" [routerLink]="auth.homePath" (click)="menuOpen.set(false)" aria-label="Dealer Management home">
+      <span class="brand-mark" aria-hidden="true">D</span>
+      <span><strong>Dealer Management</strong><small>Operations workspace</small></span>
+    </a>
+    <div class="workspace-badge"><span class="workspace-dot" aria-hidden="true"></span>{{ isAdmin() ? 'Administration' : 'Dealer portal' }}</div>
+    <p class="nav-heading">WORKSPACE</p>
+    <nav aria-label="Main navigation">
+      @for (item of navigation(); track item.path) {
+        <a class="nav-link" [routerLink]="item.path" [class.active]="isActive(item.path, item.exact)" (click)="menuOpen.set(false)"
+          [attr.aria-current]="isActive(item.path, item.exact) ? 'page' : null">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="item.icon" /></svg>
+          <span>{{ item.label }}</span><span class="nav-arrow" aria-hidden="true">›</span>
+        </a>
+      }
+    </nav>
+    @if (!isAdmin()) {
+      <a class="create-draft" routerLink="/dealer/orders/new" (click)="menuOpen.set(false)"><span aria-hidden="true">＋</span> New draft</a>
+    }
+    <div class="sidebar-note">
+      <span class="note-label">{{ isAdmin() ? 'Inventory & fulfillment' : 'Your business, connected' }}</span>
+      <p>{{ isAdmin() ? 'Manage your dealer network, review orders and keep inventory moving.' : 'Explore products, build orders and follow every delivery.' }}</p>
+    </div>
+    <div class="sidebar-footer"><span class="footer-mark">DMS</span><span>Dealer Management System</span></div>
+  </aside>
+  <div class="workspace-content">
+    <main id="main-content" tabindex="-1"><router-outlet /></main>
+    <footer class="workspace-footer"><span>Dealer Management System</span><span>{{ isAdmin() ? 'Administration' : 'Dealer portal' }}</span></footer>
+  </div>
+</div>

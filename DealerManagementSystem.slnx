@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/DealerManagementSystem.API/DealerManagementSystem.API.csproj" />
+    <Project Path="backend/DealerManagementSystem.Application/DealerManagementSystem.Application.csproj" />
+    <Project Path="backend/DealerManagementSystem.Domain/DealerManagementSystem.Domain.csproj" />
+    <Project Path="backend/DealerManagementSystem.Infrastructure/DealerManagementSystem.Infrastructure.csproj" />
+    <Project Path="backend/DealerManagementSystem.Tests/DealerManagementSystem.Tests.csproj" />
+  </Folder>
+</Solution>
