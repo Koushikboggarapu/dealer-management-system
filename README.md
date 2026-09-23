@@ -23,25 +23,28 @@ An Angular and ASP.NET Core application for managing dealer profiles, product in
 
 ## Backend Application Setup 
 
+Step 1: Configure the JWT Key 
+Add a 32-byte JWT key either in User Secrets or appsettings.json. 
+
+Example: 
 { 
   "Jwt:Key": "mOTtCrLNDV7/uRXTPsw3cqfNSWkHwflaglC7sLumpug=" 
 } 
 
 Step 2: Build the Application 
-
 Build the solution to restore dependencies and ensure the application compiles successfully. 
 
 Step 3: Configure the Database Connection 
-
-Update the SQL Server connection string in appsettings.json and DealerManagementSystem.Infrastructure/Persistence/DmsDbContextFactory.cs. Ensure both files point to the correct SQL Server instance and database. 
+Update the SQL Server connection string in appsettings.json and DealerManagementSystem.Infrastructure/Persistence/DmsDbContextFactory.cs. 
 
 Step 4: Apply Database Migrations 
-
-Open Package Manager Console and run: Update-Database. This applies the Entity Framework Core migrations and creates or updates the database schema. 
+Open Package Manager Console and run: Update-Database. 
 
 Step 5: Run the Application 
-
 Start the API project using Visual Studio or the .NET CLI. 
+
+Step 6: Access Swagger Documentation 
+Navigate to https://localhost:<port>/swagger to test the APIs. 
 
 ## Features
 
